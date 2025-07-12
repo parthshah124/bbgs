@@ -1,171 +1,288 @@
-/*
-	Eventually by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+(function ($) {
+    "use strict";
+    
+    /*--
+        Commons Variables
+    -----------------------------------*/
+    var $window = $(window);
+    var $body = $('body');
+    var $mainWrapper = $('.main-wrapper');
+    
+    /*-- 
+        1: Sticky Header
+    ----------------------------------------------------*/
+    var $header = $('.header'),
+        $headerSticky = $('.header-sticky');
+    $window.on('scroll', function(){
+        var $headerHeight = $header.height();
+        if ($window.scrollTop() >= 200) {
+            $headerSticky.addClass('is-sticky');
+            $mainWrapper.css('padding-top', $headerHeight);
+        } else {
+            $headerSticky.removeClass('is-sticky');
+            $mainWrapper.css('padding-top', 0);
+        }
+    });
+    
+    /*--
+        2: Header Search & Off Canvas Toggle
+    ----------------------------------------------------*/
+    /*Search & Off Canvas Open*/
+    var $headerToggle = $('.header-toggle');
+    $headerToggle.on('click', '.toggle', function(e){
+        e.preventDefault();
+        var $this = $(this),
+            $target = $this.data('target');
+        $('#'+$target).addClass($target+'-open');
+    });
+    /*Search & Off Canvas Close*/
+    var $searchClose = $('.search-close');
+    $searchClose.on('click', function(e){
+        e.preventDefault();
+        var $this = $(this);
+        $this.closest('.search-overlay').removeClass('search-overlay-open');
+    });
+    var $offCanvasClose = $('.off-canvas-close');
+    $offCanvasClose.on('click', function(e){
+        e.preventDefault();
+        var $this = $(this);
+        $this.closest('.off-canvas').removeClass('off-canvas-open');
+    });
+    
+    /*--
+        3: Off Canvas Menu
+    ----------------------------------------------------*/
+    var $offCanvasNav = $('.off-canvas-nav, .sidebar-collapse-nav'),
+        $offCanvasNavSubMenu = $offCanvasNav.find('.sub-menu');
+    
+    /*Add Toggle Button With Off Canvas Sub Menu*/
+    $offCanvasNavSubMenu.parent().prepend('<span class="menu-expand"><i></i></span>');
+    
+    /*Close Off Canvas Sub Menu*/
+    $offCanvasNavSubMenu.slideUp();
+    
+    /*Category Sub Menu Toggle*/
+    $offCanvasNav.on('click', 'li a, li .menu-expand', function(e) {
+        var $this = $(this);
+        if ( $this.parent().attr('class').match(/\b(menu-item-has-children|has-children|has-sub-menu)\b/) && ($this.attr('href') === '#' || $this.hasClass('menu-expand')) ) {
+            e.preventDefault();
+            if ($this.siblings('ul:visible').length){
+                $this.parent('li').removeClass('active');
+                $this.siblings('ul').slideUp();
+                $this.parent('li').find('li').removeClass('active');
+                $this.parent('li').find('ul:visible').slideUp();
+            } else {
+                $this.parent('li').addClass('active');
+                $this.closest('li').siblings('li').removeClass('active').find('li').removeClass('active');
+                $this.closest('li').siblings('li').find('ul:visible').slideUp();
+                $this.siblings('ul').slideDown();
+            }
+        }
+    });
+    
+    
+    /*--
+        4: Slider/Carousel Activation
+    ----------------------------------------------------*/
+    
+    /*Hero Slider*/
+    var $heroSlider = $('.hero-slider');
+    $heroSlider.slick({
+        arrows: false,
+        fade: true,
+        prevArrow: '<button class="slick-prev"><i class="fa fa-angle-left"></i></button>',
+        nextArrow: '<button class="slick-next"><i class="fa fa-angle-right"></i></button>',
+        autoplay: true,
+        autoplaySpeed: 5000
+    });
+    
+    /*Brand Slider*/
+    $('.brand-slider').slick({
+        arrows: true,
+        dots: false,
+        infinite: true,
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        appendArrows: $('.software-section'),
+        prevArrow: '<button class="slick-prev"><i class="fa fa-chevron-left"></i></button>',
+        nextArrow: '<button class="slick-next"><i class="fa fa-chevron-right"></i></button>',
+        responsive: [
+            {
+                breakpoint: 1199,
+                settings: {
+                    slidesToShow: 4,
+                }
+            },
+            {
+                breakpoint: 991,
+                settings: {
+                    slidesToShow: 3,
+                }
+            },
+            {
+                breakpoint: 767,
+                settings: {
+                    slidesToShow: 2,
+                }
+            },
+            {
+                breakpoint: 575,
+                settings: {
+                    slidesToShow: 1,
+                }
+            }
+        ]
+    });
+    
+    /*Testimonial Slider*/
+    var $testimonialSlider = $('.testimonial-slider');
+    $testimonialSlider.slick({
+        slidesToShow: 1,
+        arrows: false,
+        prevArrow: '<button class="slick-prev"><i class="fa fa-angle-left"></i></button>',
+        nextArrow: '<button class="slick-next"><i class="fa fa-angle-right"></i></button>',
+        autoplay: true,
+        autoplaySpeed: 5000,
+    });
+    
+    /*Testimonial Slider 2*/
+    var $testimonialSlider2 = $('.testimonial-slider-2');
+    $testimonialSlider2.slick({
+        slidesToShow: 2,
+        arrows: false,
+        prevArrow: '<button class="slick-prev"><i class="fa fa-angle-left"></i></button>',
+        nextArrow: '<button class="slick-next"><i class="fa fa-angle-right"></i></button>',
+        autoplay: true,
+        autoplaySpeed: 5000,
+        responsive: [
+            {
+                breakpoint: 767,
+                settings: {
+                    slidesToShow: 1
+                }
+            }
+        ]
+    });
+    
+    /*--
+        5: Accordion Function (Add or Remove 
+           Open Class to Accordion Card)
+    ----------------------------------------------------*/
+    $('[data-bs-toggle="collapse"]').closest('.card').addClass('open');
+    $('.collapsed[data-bs-toggle="collapse"]').closest('.card').removeClass('open');
+    $('[data-bs-toggle="collapse"]').on('click', function(){
+        var $this = $(this),
+            $thisCard = $this.closest('.card');
+        if( $this.hasClass('collapsed') && $thisCard.parent().hasClass('collapsable')) {
+            $thisCard.addClass('open');
+        }else if($this.hasClass('collapsed') && !$thisCard.parent().hasClass('collapsable')) {
+            $thisCard.siblings().removeClass('open');
+            $thisCard.addClass('open');
+        } else {
+            $thisCard.removeClass('open');
+        }
+    });
+    
+    /*--
+        6: MailChimp
+    -----------------------------------*/
+    $('#mc-form').ajaxChimp({
+        language: 'en',
+        callback: mailChimpResponse,
+        // ADD YOUR MAILCHIMP URL BELOW HERE!
+        url: 'http://devitems.us11.list-manage.com/subscribe/post?u=6bbb9b6f5827bd842d9640c82&amp;id=05d85f18ef'
 
-(function() {
+    });
+    function mailChimpResponse(resp) {
+        $('.mailchimp-alerts').addClass('open');
+        if (resp.result === 'success') {
+            $('.mailchimp-success').html('' + resp.msg).fadeIn(900);
+            $('.mailchimp-error').fadeOut(400);
+        } else if(resp.result === 'error') {
+            $('.mailchimp-error').html('' + resp.msg).fadeIn(900);
+        }  
+    }
+    
+    /*--
+        7: Sticky Sidebar Activation
+    -----------------------------------*/
+    
+    /*Case Details Sidebar*/
+    $('.case-details-sidebar').stickySidebar({
+        containerSelector: '.case-details-wrap',
+        innerWrapperSelector: '.case-details-info',
+        topSpacing: 120,
+        bottomSpacing: 60,
+        minWidth: 992
+    });
+    
+    /*--
+        8: Scroll To Top
+    ----------------------------------------------------*/
+    $body.append('<a class="scroll-to-top" href=#top><i class="fa fa-angle-up"></i></a>');
+    var $scrollToTop = $(".scroll-to-top");
+    $window.on('scroll', function(){
+        if ($window.scrollTop() >= $window.height()) {
+            $scrollToTop.addClass('show');
+        } else {
+            $scrollToTop.removeClass('show');
+        }
+    });
+    $scrollToTop.on('click', function (e) {
+        e.preventDefault();
+        $('html, body').animate({
+            scrollTop: 0
+        }, 500);
+    });
+    
+    
+    /*--
+        9: Ajax Contact Form JS
+    ------------------------*/
+    $(function () {
+        // Get the form.
+        var form = $('#contact-form');
+        // Get the messages div.
+        var formMessages = $('.form-message');
+        // Set up an event listener for the contact form.
+        $(form).submit(function (e) {
+            // Stop the browser from submitting the form.
+            e.preventDefault();
+            // Serialize the form data.
+            var formData = $(form).serialize();
+            // Submit the form using AJAX.
+            $.ajax({
+                type: 'POST',
+                url: $(form).attr('action'),
+                data: formData,
+            })
+            .done(function (response) {
+            // Make sure that the formMessages div has the 'success' class.
+            $(formMessages).removeClass('error');
+            $(formMessages).addClass('success');
 
-	"use strict";
+            // Set the message text.
+            $(formMessages).text(response);
 
-	var	$body = document.querySelector('body');
+            // Clear the form.
+            $('#contact-form input,#contact-form textarea').val('');
+            })
+            .fail(function (data) {
+            // Make sure that the formMessages div has the 'error' class.
+            $(formMessages).removeClass('success');
+            $(formMessages).addClass('error');
 
-	// Methods/polyfills.
+            // Set the message text.
+            if (data.responseText !== '') {
+                $(formMessages).text(data.responseText);
+            } else {
+                $(formMessages).text(
+                    'Oops! An error occured and your message could not be sent.'
+                );
+            }
+            });
+        });
+    });
+    
+})(jQuery);
 
-		// classList | (c) @remy | github.com/remy/polyfills | rem.mit-license.org
-			!function(){function t(t){this.el=t;for(var n=t.className.replace(/^\s+|\s+$/g,"").split(/\s+/),i=0;i<n.length;i++)e.call(this,n[i])}function n(t,n,i){Object.defineProperty?Object.defineProperty(t,n,{get:i}):t.__defineGetter__(n,i)}if(!("undefined"==typeof window.Element||"classList"in document.documentElement)){var i=Array.prototype,e=i.push,s=i.splice,o=i.join;t.prototype={add:function(t){this.contains(t)||(e.call(this,t),this.el.className=this.toString())},contains:function(t){return-1!=this.el.className.indexOf(t)},item:function(t){return this[t]||null},remove:function(t){if(this.contains(t)){for(var n=0;n<this.length&&this[n]!=t;n++);s.call(this,n,1),this.el.className=this.toString()}},toString:function(){return o.call(this," ")},toggle:function(t){return this.contains(t)?this.remove(t):this.add(t),this.contains(t)}},window.DOMTokenList=t,n(Element.prototype,"classList",function(){return new t(this)})}}();
-
-		// canUse
-			window.canUse=function(p){if(!window._canUse)window._canUse=document.createElement("div");var e=window._canUse.style,up=p.charAt(0).toUpperCase()+p.slice(1);return p in e||"Moz"+up in e||"Webkit"+up in e||"O"+up in e||"ms"+up in e};
-
-		// window.addEventListener
-			(function(){if("addEventListener"in window)return;window.addEventListener=function(type,f){window.attachEvent("on"+type,f)}})();
-
-	// Play initial animations on page load.
-		window.addEventListener('load', function() {
-			window.setTimeout(function() {
-				$body.classList.remove('is-preload');
-			}, 100);
-		});
-
-	// Slideshow Background.
-		(function() {
-
-			// Settings.
-				var settings = {
-
-					// Images (in the format of 'url': 'alignment').
-						images: {
-							'images/bg01.jpg': 'center',
-							'images/bg02.jpg': 'center',
-							'images/bg03.jpg': 'center'
-						},
-
-					// Delay.
-						delay: 6000
-
-				};
-
-			// Vars.
-				var	pos = 0, lastPos = 0,
-					$wrapper, $bgs = [], $bg,
-					k, v;
-
-			// Create BG wrapper, BGs.
-				$wrapper = document.createElement('div');
-					$wrapper.id = 'bg';
-					$body.appendChild($wrapper);
-
-				for (k in settings.images) {
-
-					// Create BG.
-						$bg = document.createElement('div');
-							$bg.style.backgroundImage = 'url("' + k + '")';
-							$bg.style.backgroundPosition = settings.images[k];
-							$wrapper.appendChild($bg);
-
-					// Add it to array.
-						$bgs.push($bg);
-
-				}
-
-			// Main loop.
-				$bgs[pos].classList.add('visible');
-				$bgs[pos].classList.add('top');
-
-				// Bail if we only have a single BG or the client doesn't support transitions.
-					if ($bgs.length == 1
-					||	!canUse('transition'))
-						return;
-
-				window.setInterval(function() {
-
-					lastPos = pos;
-					pos++;
-
-					// Wrap to beginning if necessary.
-						if (pos >= $bgs.length)
-							pos = 0;
-
-					// Swap top images.
-						$bgs[lastPos].classList.remove('top');
-						$bgs[pos].classList.add('visible');
-						$bgs[pos].classList.add('top');
-
-					// Hide last image after a short delay.
-						window.setTimeout(function() {
-							$bgs[lastPos].classList.remove('visible');
-						}, settings.delay / 2);
-
-				}, settings.delay);
-
-		})();
-
-	// Signup Form.
-		(function() {
-
-			// Vars.
-				var $form = document.querySelectorAll('#signup-form')[0],
-					$submit = document.querySelectorAll('#signup-form input[type="submit"]')[0],
-					$message;
-
-			// Bail if addEventListener isn't supported.
-				if (!('addEventListener' in $form))
-					return;
-
-			// Message.
-				$message = document.createElement('span');
-					$message.classList.add('message');
-					$form.appendChild($message);
-
-				$message._show = function(type, text) {
-
-					$message.innerHTML = text;
-					$message.classList.add(type);
-					$message.classList.add('visible');
-
-					window.setTimeout(function() {
-						$message._hide();
-					}, 3000);
-
-				};
-
-				$message._hide = function() {
-					$message.classList.remove('visible');
-				};
-
-			// Events.
-			// Note: If you're *not* using AJAX, get rid of this event listener.
-				$form.addEventListener('submit', function(event) {
-
-					event.stopPropagation();
-					event.preventDefault();
-
-					// Hide message.
-						$message._hide();
-
-					// Disable submit.
-						$submit.disabled = true;
-
-					// Process form.
-					// Note: Doesn't actually do anything yet (other than report back with a "thank you"),
-					// but there's enough here to piece together a working AJAX submission call that does.
-						window.setTimeout(function() {
-
-							// Reset form.
-								$form.reset();
-
-							// Enable submit.
-								$submit.disabled = false;
-
-							// Show message.
-								$message._show('success', 'Thank you!');
-								//$message._show('failure', 'Something went wrong. Please try again.');
-
-						}, 750);
-
-				});
-
-		})();
-
-})();
